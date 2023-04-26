@@ -66,6 +66,15 @@
         margin-bottom: 0px;
         margin-left: 50px;
     }
+
+    .part4Input{
+        height: 20px;
+        width: 210px;
+    }
+
+    .part4TextArea{
+        resize: none;
+    }
 </style>
 
 
@@ -202,7 +211,7 @@
 </body>
 
 
-<body>
+<>
     <h1>Part 3: University policies and services </h1>
 
     <h4 class="subt">PLAGIARISM</h4>
@@ -272,6 +281,173 @@
         " target="_blank">here</a>
         to read more about Disability Services.
     </p>
+    
+
+    <!-- Part 4-->
+
+    <table width="50%" cellspacing="1.5">
+        <form>
+            <tr>
+                <td>Name:</td>
+                <td><input id="nameInput" class="part4Input" type="text" required /></td>
+            </tr>
+
+            <tr>
+                <td>Module Code:</td>
+                <td><input id="moduleCodeInput" class="part4Input" type="text" /></td>
+            </tr>
+
+            <tr>
+                <td>Today Date: </td>
+                <td><input id="todayDate" class="part4Input" type="datetime" readonly /></td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <textarea rows="4" cols="10" required class="part4TextArea" id="message" placeholder="Hello Test 202304"></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    Find: 
+                    <input type="text" class="part4Input" id="find" />
+                </td>
+                <td>
+                    Replace:
+                    <input type="text" class="part4Input" id="replace" disabled/>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <button id="findAndReplace">Find and replace</button>
+                </td>
+            </tr>
+        </form>
+    </table>
+
+    <!-- <button id="validateForm" onclick="validateForm()">Click me</button> -->
+    <!-- <label>English</label>
+    <input type="radio" name="radioBtnpart4" checked/>
+    <label>Malay</label>
+    <input type="radio" name="radioBtnpart4" /> -->
 
 </body> 
 </html>
+
+
+<script>
+    let nameInput = document.getElementById("nameInput");
+    let moduleCodeInput = document.getElementById("moduleCodeInput");
+    let find = document.getElementById("find");
+    let replace = document.getElementById("replace");
+
+    document.addEventListener("DOMContentLoaded", function(){
+        formatDateTime();
+        
+    });
+
+    nameInput.addEventListener("keypress", function(event){
+        let key = event.key;
+        let regex = new RegExp("^[a-zA-Z0-9]+$");
+        // Check if key is in the reg exp
+        if (!regex.test(key)) {
+            // Restrict the special characters
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    find.addEventListener("keydown", function(event){
+        let findValue = find.value;
+
+        // for backspace and del
+        var key = event.keyCode || event.charCode;
+
+        if (key == 8 || key == 46){
+            if (findValue.length === 1) {
+                replace.setAttribute("disabled", "disabled");
+            } 
+        }else{
+            if (findValue === "") {
+                replace.setAttribute("disabled", "disabled");
+            } else {
+                replace.removeAttribute("disabled");
+            }
+        }
+
+        
+    })
+
+    function formatDateTime(){
+
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+        let d = new Date();
+        let day = days[d.getDay()];
+        let hour = d.getHours();
+        let mins = d.getMinutes();
+
+        if (mins < 10) {
+            mins = "0" + mins;
+        }
+
+        let ampm = "am";
+        if(hour > 12){
+            hour -= 12;
+            ampm = "pm";
+        }
+
+        var date = d.getDate();
+        var month = months[d.getMonth()];
+        var year = d.getFullYear();
+
+        let dateTimeInput = document.getElementById("todayDate");
+        let formattedDateTime = month + " " + date + ", " + year + " " + day + " " + hour + ":" + mins + ampm;
+        dateTimeInput.value = formattedDateTime;
+    }
+
+    function validateForm(){
+        let moduleCode = moduleCodeInput.value;
+        if(moduleCode.length != 5){
+            console.log("Error");
+            return false;
+        }else{
+            let firstCharacter = moduleCode.charAt(0);
+            let secondCharacter = moduleCode.charAt(1);
+            let thirdCharacter = moduleCode.charAt(2);
+            let fourthCharacter = moduleCode.charAt(3);
+            let fifthCharacter = moduleCode.charAt(4);
+
+            let status = false;
+
+            if(firstCharacter == firstCharacter.toUpperCase() && secondCharacter == secondCharacter.toLowerCase() &&
+                !isNaN(thirdCharacter * 1) && !isNaN(fourthCharacter * 1) && !isNaN(fifthCharacter * 1)){
+                status = true;
+            }
+
+            if(!status){
+                console.log("Error");
+            }else{
+                console.log("Success");
+            }
+        }
+    }
+
+    document.getElementById("findAndReplace").onclick = function(){
+        let message = document.getElementById("message").value;
+        let findValue = find.value;
+        let replaceValue = replace.value;
+
+        if (replaceValue.length > 0) {
+            let replacedMessage = message.replaceAll(findValue, replaceValue);
+            document.getElementById("message").value = replacedMessage;
+        }else{
+            //error message
+            return false;
+        }
+    }
+    
+</script>
